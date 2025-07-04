@@ -50,5 +50,3 @@ After running the exploit, we get the password for bonus0:
 cat /home/user/bonus0/.pass
 f3f0004b6f364cb5a4147e9ef827fa922a4861408845c26b6971ad770d906728
 ```
-
-Copy the password for the next level. 

