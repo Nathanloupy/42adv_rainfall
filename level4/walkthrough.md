@@ -79,5 +79,3 @@ After running the exploit, we get the password for level5:
 cat /home/user/level5/.pass
 0f99ba5e9c446258a69b290407a6c60859e9c2d25b26575cafc9ae6d75e9456a
 ```
-
-Copy the password for the next level. 

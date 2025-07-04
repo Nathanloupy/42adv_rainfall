@@ -48,5 +48,3 @@ After running the exploit, we get a shell as level4 and can read the password:
 cat /home/user/level4/.pass
 b209ea91ad69ef36f2cf0fcbbc24c739fd10464cf545b20bea8572ebdc3c36fa
 ```
-
-Copy the password for the next level. 
