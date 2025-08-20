@@ -35,6 +35,7 @@ $1 = 0x8048682
 ```
 
 On those lines, eax is dereferenced twice and moved to edx, which is later called as a function pointer.
+In C-like terms: `eax = *p; edx = **p; ((func_t)edx)(arg1, arg2);`
 
 ## Exploitation
 
