@@ -2,7 +2,7 @@
 
 ## Binary analysis
 
-The binary is vulnerable to a buffer overflow. We can exploit this by placing shellcode in an environment variable and overflowing the buffer to redirect execution to this shellcode.
+We can exploit this by placing shellcode in an environment variable and overflowing the buffer to redirect execution to this shellcode.
 
 We noticed that when giving to stdin a lot of A on the first input, and a lot of B on the second input, we can overflow the buffer and overwrite the return address.
 
