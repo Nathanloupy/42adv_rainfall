@@ -51,7 +51,7 @@ Breakpoint 1, 0x0804867c in main ()
 0x804a00c:	 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 ```
 
-We find the offset to be 108 bytes.
+We find the offset to be 108 bytes thanks to the cyclic pattern.
 ```
 (gdb) b *0x08048680
 Breakpoint 1 at 0x8048680
