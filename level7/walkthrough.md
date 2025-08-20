@@ -4,6 +4,25 @@
 
 The binary allocates two structures and two string buffers on the heap. It uses `strcpy` to copy user input into the first buffer, then again into the second buffer, using pointers stored in the structures. The goal is to overflow the first buffer to overwrite the pointer in the second structure, so that the second `strcpy` writes to a controlled location (e.g., the GOT entry for `puts`).
 
+```
+080484f4    int32_t m()
+08048520        return printf(format: "%s - %d\n", &c, time(nullptr))
+
+
+08048521    int32_t main(int32_t argc, char** argv, char** envp)
+08048531        int32_t* eax = malloc(bytes: 8)
+0804853e        *eax = 1
+08048556        eax[1] = malloc(bytes: 8)
+08048560        int32_t* eax_4 = malloc(bytes: 8)
+0804856d        *eax_4 = 2
+08048585        eax_4[1] = malloc(bytes: 8)
+080485a0        strcpy(eax[1], argv[1])
+080485bd        strcpy(eax_4[1], argv[2])
+080485eb        fgets(buf: &c, n: 0x44, fp: fopen(filename: "/home/user/level8/.pass", mode: u"r…"))
+080485f7        puts(str: "~~")
+08048602        return 0
+```
+
 With gdb, we find the addresses returned by `malloc` for the two structures and the two buffers:
 ```
 - malloc for struct_1 (0x0804a018)
